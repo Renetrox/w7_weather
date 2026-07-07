@@ -48,14 +48,20 @@ local function draw_text(cr, txt, x, y, size, r,g,b,a, bold)
   cairo_restore(cr)
 end
 
+-- Devuelve el icono clásico junto con sus valores de color R, G, B
 local function pick_icon(state)
-  if state == "sunny" then return "☀"
-  elseif state == "cloudy" then return "☁"
-  elseif state == "rain" then return "☂"
-  elseif state == "night" then return " ☾"
-  elseif state == "offline" then return "☹"
+  if state == "sunny" then 
+    return "☀", 1.0, 0.85, 0.0      -- Amarillo brillante
+  elseif state == "cloudy" then 
+    return "☁", 0.75, 0.82, 0.88    -- Gris azulado suave
+  elseif state == "rain" then 
+    return "☂", 0.22, 0.65, 1.0     -- Azul lluvia
+  elseif state == "night" then 
+    return "☾", 0.92, 0.92, 0.65    -- Amarillo Luna tenue
+  elseif state == "offline" then 
+    return "☹", 1.0, 0.35, 0.35     -- Rojo alerta
   end
-  return "?"
+  return "?", 1.0, 1.0, 1.0         -- Blanco por defecto
 end
 
 -- =========================
@@ -78,10 +84,12 @@ function conky_draw_w7_weather()
   -- Fondo PNG Win7
   draw_png(cr, BG_PNG, 0, 0, conky_window.width, conky_window.height)
 
-  -- Icono
-  local icon = pick_icon(state)
-  draw_text(cr, icon, 37, 66, 74, 0,0,0,0.40, true)
-  draw_text(cr, icon, 36, 65, 74, 1,1,1,0.92, true)
+  -- Icono Dinámico con Color e Iconos Clásicos
+  local icon, icon_r, icon_g, icon_b = pick_icon(state)
+  -- Sombra proyectada del icono (fija en negro transparente)
+  draw_text(cr, icon, 37, 66, 74, 0, 0, 0, 0.40, true)
+  -- Icono frontal con color personalizado segun el clima
+  draw_text(cr, icon, 36, 65, 74, icon_r, icon_g, icon_b, 0.92, true)
 
   -- Temperatura
   draw_text(cr, temp, 128, 42, 26, 0,0,0,0.45, true)
